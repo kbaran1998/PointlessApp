@@ -12,14 +12,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView pointlessText;
     int presses;
     String textForBtn;
+    String buttonText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         presses = 0;
+        buttonText = "Press Me";
         pointlessBtn = findViewById(R.id.pointlessButton);
         pointlessText = findViewById(R.id.pointlessText);
         textForBtn = "Pointless: 0 times";
+        pointlessBtn.setText(buttonText);
         pointlessText.setText(textForBtn);
         pointlessBtn.setOnClickListener(this);
     }
