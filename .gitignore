@@ -10,4 +10,6 @@
 .DS_Store
 /build
 /captures
+/config
+/tools
 .externalNativeBuild
