@@ -1,7 +1,6 @@
 package com.example.pointless;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -13,7 +12,6 @@ public class QuoteList {
     private String currentQuote;
 
     public QuoteList(Stack<String> quotes) {
-        assert !quotes.empty();
         this.quotes = quotes;
         usedQuotes = new ArrayList<>();
         currentQuote =  quotes.pop();
