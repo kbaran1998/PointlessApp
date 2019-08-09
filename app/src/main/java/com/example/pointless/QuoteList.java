@@ -2,6 +2,7 @@ package com.example.pointless;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -18,13 +19,15 @@ public class QuoteList {
     private Stack<String> quotesStack;
     private LinkedList<String> usedQuotes;
     private String currentQuote;
+    private QuotesListTool tool;
 
     /**
      * A constructor for Quote.
      * @param quotes stack with quotes
      */
-    public QuoteList(Stack<String> quotes) {
+    public QuoteList(Stack<String> quotes, QuotesListTool tool) {
         this.quotesStack = quotes;
+        this.tool = tool;
         if (this.quotesStack.isEmpty()) {
             quotes.push(EMPTY_QUOTE_STACK);
         }
@@ -47,7 +50,7 @@ public class QuoteList {
      */
     public void nextQuote() {
         if (quotesStack.empty()) {
-            Collections.shuffle(usedQuotes);
+            usedQuotes = tool.shuffleQuotesLinkedList(usedQuotes);
             while(!usedQuotes.isEmpty()) {
                 quotesStack.push(usedQuotes.poll());
             }

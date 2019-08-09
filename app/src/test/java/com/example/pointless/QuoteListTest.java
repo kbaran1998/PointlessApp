@@ -15,9 +15,10 @@ import static org.junit.Assert.assertEquals;
  * Test for QuotesList data structure.
  */
 public class QuoteListTest {
+    private final static String delimiter = "_";
     private QuoteList quoteList;
     private Stack<String> quoteStack;
-
+    private QuotesListTool quoteToolMock;
     /**
      * Stack initializer.
      */
@@ -69,7 +70,6 @@ public class QuoteListTest {
      * @param str long string with substrings.
      */
     void strListPlacedToStack(String str) {
-        String delimiter = "_";
         Scanner scanner = new Scanner(str);
         scanner.useDelimiter(delimiter);
         while(scanner.hasNext()) {
