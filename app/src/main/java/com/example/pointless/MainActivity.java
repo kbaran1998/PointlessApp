@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    static Language defaultLanguage = Language.ENGLISH;
     Button pointlessBtn;
     TextView pointlessText;
     //int presses;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         //presses = 0;
         QuotesListTool tool = new QuotesListTool("quotesDB.txt");
-        listQuotes = new QuoteList(tool.placeQuotesInStack(), tool);
+        listQuotes = new QuoteList(tool.placeQuotesFromDBInStack(), tool);
         buttonText = "Press Me";
         pointlessBtn = findViewById(R.id.pointlessButton);
         pointlessText = findViewById(R.id.pointlessText);

@@ -5,11 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 
 import java.util.Scanner;
 import java.util.Stack;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for QuotesList data structure.
@@ -17,7 +20,8 @@ import static org.junit.Assert.assertEquals;
 public class QuoteListTest {
     private final static String delimiter = "_";
     private QuoteList quoteList;
-    private Stack<String> quoteStack;
+    private Stack<Quote> quoteStack;
+    @Mock
     private QuotesListTool quoteToolMock;
     /**
      * Stack initializer.
@@ -25,6 +29,7 @@ public class QuoteListTest {
     @BeforeEach
     void before() {
         quoteStack = new Stack<>();
+        quoteToolMock = mock(QuotesListTool.class);
     }
 
     /**
@@ -34,8 +39,8 @@ public class QuoteListTest {
     @ParameterizedTest
     @ValueSource(strings = {"Text1", "Text2", "Text3"})
     void getCurrentQuoteWhenCreatedTest(String testString) {
-         quoteStack.push(testString);
-         quoteList = new QuoteList(quoteStack);
+         quoteStack.push(new Quote(testString, Language.ENGLISH));
+         quoteList = new QuoteList(quoteStack, quoteToolMock);
          assertEquals(quoteList.getCurrentQuote(), testString);
     }
 
@@ -49,7 +54,7 @@ public class QuoteListTest {
             "Text1 and Text2_Text3, Text3"})
     void getCurrentQuoteWhenCreatedTestMultiple(String strList, String correct) {
         strListPlacedToStack(strList);
-        quoteList = new QuoteList(quoteStack);
+        quoteList = new QuoteList(quoteStack, quoteToolMock);
         assertEquals(quoteList.getCurrentQuote(), correct);
     }
 
@@ -58,13 +63,49 @@ public class QuoteListTest {
      */
     @Test
     void changeQuoteToNext() {
-        quoteStack.push("Text3");
-        quoteStack.push("Text2");
-        quoteList = new QuoteList(quoteStack);
+        quoteStack.push(new Quote("Text3", Language.ENGLISH));
+        quoteStack.push(new Quote("Text2", Language.ENGLISH));
+        quoteList = new QuoteList(quoteStack, quoteToolMock);
         quoteList.nextQuote();
         assertEquals(quoteList.getCurrentQuote(), "Text3");
     }
 
+    /**
+     * Test for checking that when the user uses up all of the quotes,
+     * the system starts to use old quotes. The QuoteListTool class is
+     * mocked because we would like to have observability and conceivability
+     * of the class as the shuffling process is not deterministic.
+     * @param strList string to be parsed into a list
+     * @param size size of the list used to loop until list is empty
+     * @param correct the correct answer
+     */
+    @ParameterizedTest
+    @CsvSource({"Text1_Text2_Text3, 3, Text1", "Text3_Text2, 2, Text3", "Text2, 1, Text2",
+            "Text1 and Text2_Text3, 2, Text1 and Text2"})
+    void nextQuoteWhenUsedAllQuotes(String strList, int size, String correct) {
+        strListPlacedToStack(strList);
+        quoteList = new QuoteList(quoteStack, quoteToolMock);
+        when(quoteToolMock.shuffleQuotesLinkedList(quoteList.getUsedQuotes()))
+                .thenReturn(quoteList.getUsedQuotes());
+        while(size>0){
+            quoteList.nextQuote();
+            size--;
+        }
+        assertEquals(quoteList.getCurrentQuote(), correct);
+    }
+
+    /**
+     * Test that when quote list is empty, there is only one quote.
+     */
+    @Test
+    void newQuoteListThatHasEmptyStack() {
+        quoteList = new QuoteList(quoteStack, quoteToolMock);
+        assertEquals(quoteList.getCurrentQuote(), quoteList.getEmptyQuoteStack());
+    }
+
+    /*
+        TO DO: TEST size of the used quotes list.
+    */
     /**
      * Method to parse substrings of the quotes into individual strings.
      * @param str long string with substrings.
@@ -73,7 +114,7 @@ public class QuoteListTest {
         Scanner scanner = new Scanner(str);
         scanner.useDelimiter(delimiter);
         while(scanner.hasNext()) {
-            quoteStack.push(scanner.next());
+            quoteStack.push(new Quote(scanner.next(), Language.ENGLISH));
         }
     }
 }

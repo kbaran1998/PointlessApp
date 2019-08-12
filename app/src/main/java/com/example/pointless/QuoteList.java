@@ -1,8 +1,6 @@
 package com.example.pointless;
 
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Stack;
 
 /**
@@ -15,25 +13,27 @@ import java.util.Stack;
  * @author Krzysztof Baran
  */
 public class QuoteList {
-    private final static String EMPTY_QUOTE_STACK = "Hello There!";
-    private Stack<String> quotesStack;
-    private LinkedList<String> usedQuotes;
+    private final static Quote EMPTY_QUOTE_STACK = new Quote("Hello There!",
+            Language.UNKNOWN);
+    private Stack<Quote> quotesStack;
+    private LinkedList<Quote> usedQuotes;
     private String currentQuote;
     private QuotesListTool tool;
 
     /**
      * A constructor for Quote.
      * @param quotes stack with quotes
+     * @param tool helper for getting and formatting quotes
      */
-    public QuoteList(Stack<String> quotes, QuotesListTool tool) {
+    public QuoteList(Stack<Quote> quotes, QuotesListTool tool) {
         this.quotesStack = quotes;
         this.tool = tool;
         if (this.quotesStack.isEmpty()) {
             quotes.push(EMPTY_QUOTE_STACK);
         }
         usedQuotes = new LinkedList<>();
-        currentQuote =  quotes.pop();
-        usedQuotes.add(currentQuote);
+        currentQuote =  quotes.peek().getQuoteContent();
+        usedQuotes.add(quotes.pop());
     }
 
     /**
@@ -42,6 +42,22 @@ public class QuoteList {
      */
     public String getCurrentQuote() {
         return currentQuote;
+    }
+
+    /**
+     * Used Quotes list getter for mainly testing purposes.
+     * @return linked list of used quotes.
+     */
+    public LinkedList<Quote> getUsedQuotes() {
+        return usedQuotes;
+    }
+
+    /**
+     * Getter for the Empty Stack Message.
+     * @return string message
+     */
+    public String getEmptyQuoteStack() {
+        return EMPTY_QUOTE_STACK.getQuoteContent();
     }
 
     /**
@@ -55,9 +71,9 @@ public class QuoteList {
                 quotesStack.push(usedQuotes.poll());
             }
         }
-
-        currentQuote = quotesStack.pop();
-        usedQuotes.add(currentQuote);
+        Quote thisQuote = quotesStack.pop();
+        currentQuote = thisQuote.getQuoteContent();
+        usedQuotes.add(thisQuote);
     }
 
 }
