@@ -1,7 +1,6 @@
 package com.example.pointless;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,14 +13,14 @@ import java.util.Stack;
  * @author Krzysztof Baran
  */
 public class QuotesListTool {
-    private final String fileName;
+    private final InputStream fileInputStream;
 
     /**
      * Constructor for Quotes List tool that handles DB calls and list edits.
      * @param fileName name of the file
      */
-    public QuotesListTool(String fileName) {
-        this.fileName = fileName;
+    public QuotesListTool(InputStream fileName) {
+        this.fileInputStream = fileName;
     }
 
     /**
@@ -52,8 +51,8 @@ public class QuotesListTool {
         Stack<Quote> stringStack = new Stack<>();
         Scanner sc = null;
         try {
-            sc = new Scanner(new FileInputStream(fileName));
-        } catch (FileNotFoundException e) {
+            sc = new Scanner(fileInputStream);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         List<Quote> listOfQuotes = new ArrayList<>();

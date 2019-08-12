@@ -7,11 +7,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
 
+import java.io.IOException;
+import java.util.Stack;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     static Language defaultLanguage = Language.ENGLISH;
     Button pointlessBtn;
     TextView pointlessText;
-    //int presses;
     String textForQuote;
     String buttonText;
     QuoteList listQuotes;
@@ -20,9 +22,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //presses = 0;
-        QuotesListTool tool = new QuotesListTool("quotesDB.txt");
-        listQuotes = new QuoteList(tool.placeQuotesFromDBInStack(), tool);
+
+        QuotesListTool tool;
+        try {
+            tool = new QuotesListTool(getAssets().open("quotesDB.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            tool = new QuotesListTool(null);
+        }
+        Stack<Quote> quotesStack = tool.placeQuotesFromDBInStack();
+        listQuotes = new QuoteList(quotesStack, tool);
         buttonText = "Press Me";
         pointlessBtn = findViewById(R.id.pointlessButton);
         pointlessText = findViewById(R.id.pointlessText);
@@ -36,11 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view){
         if (view.getId() == R.id.pointlessButton) {
-//            presses++;
-//            textForQuote = "Pointless: "+ presses +" times";
-//            pointlessText.setText(textForQuote);
             listQuotes.nextQuote();
             textForQuote = listQuotes.getCurrentQuote();
+            pointlessText.setText(textForQuote);
         }
     }
 
